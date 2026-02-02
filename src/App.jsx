@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import logo from './assets/logo.png'
+import logo from './assets/Logo.png'
 import chat from './assets/chat.png'
 import video from './assets/video.png'
 import image from './assets/image.png'
