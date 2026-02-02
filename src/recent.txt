@@ -1,0 +1,120 @@
+import axios from 'axios'
+import React, { useState } from 'react'
+
+const App = () => {
+  const [data, setData] = useState({
+    firstname: '',
+    lastname: '',
+    email: '',
+    dob: '',
+    file: '',
+    jobrole: '',
+    cover: ''
+  })
+
+  function handle(e) {
+    setData({ ...data, [e.target.name]: e.target.value })
+  }
+
+  async function register(e) {
+    e.preventDefault()
+    let response = await axios.post(
+      'https://dummyjson.com/posts/add',
+      data
+    )
+    console.log(response.data)
+  }
+
+  return (
+    <div className='text-center '>
+      <form onSubmit={register}>
+        <fieldset className='border-2 m-5'>
+          <legend className='text-2xl font-semibold text-purple-700'>
+            Registration Form
+          </legend>
+
+          <label className='text-xl'>First Name: </label>
+          <input
+            onChange={handle}
+            className='border-2 rounded-md p-3 m-2'
+            type="text"
+            name="firstname"
+            placeholder='First Name'
+          />
+          <br />
+
+          <label className='text-xl'>Last Name: </label>
+          <input
+            onChange={handle}
+            className='border-2 rounded-md p-3 m-2'
+            type="text"
+            name="lastname"
+            placeholder='Last Name'
+          />
+          <br />
+
+          <label className='text-xl'>Email: </label>
+          <input
+            onChange={handle}
+            className='border-2 rounded-md p-3 m-2'
+            type="text"
+            name="email"
+            placeholder='Email'
+          />
+          <br />
+
+          <label className='text-xl'>Date of Birth: </label>
+          <input
+            onChange={handle}
+            className='border-2 rounded-md p-3 m-2'
+            type="date"
+            name="dob"
+          />
+          <br />
+
+          <label className='text-xl'>Upload File: </label>
+          <input
+            className='border-2 rounded-md p-3 m-2'
+            type="file"
+            name="file"
+          />
+          <br />
+
+          <label className='text-xl'>Job Role: </label>
+          <select
+            name="jobrole"
+            onChange={handle}
+            className='border-2 p-3 rounded-md'
+          >
+            <option value=""></option>
+            <option value="Software Engineer">Software Engineer</option>
+            <option value="Full Stack Developer">Full Stack Developer</option>
+            <option value="Front End Developer">Front End Developer</option>
+            <option value="Back End Developer">Back End Developer</option>
+          </select>
+          <br />
+
+          <label className='text-xl'>Cover Letter</label>
+          <br />
+          <textarea
+            onChange={handle}
+            className='border-2 rounded-md'
+            name="cover"
+            rows="10"
+            cols="50"
+          ></textarea>
+          <br />
+
+          <button
+            type="submit"
+            className='bg-purple-600 p-3 text-white rounded-md m-3'
+          >
+            Submit
+          </button>
+        </fieldset>
+      </form>
+    </div>
+  )
+}
+
+export default App
