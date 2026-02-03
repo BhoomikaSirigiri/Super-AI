@@ -9,9 +9,9 @@ import user from './assets/avatar.png'
 import help from './assets/help.png'
 import sidebar from './assets/sidebar.png'
 import superai from './assets/superai.png'
-import logomark from './assets/Logomark.png'
-import logomark1 from './assets/Logomark1.png'
-import logomark3 from './assets/Logomark2.png'
+import logomark from './assets/logomark.png'
+import logomark1 from './assets/logomark1.png'
+import logomark3 from './assets/logomark2.png'
 import { FiChevronDown, FiImage, FiFileText, FiCamera, FiPaperclip } from "react-icons/fi";
 import useravatar from './assets/useravatar.png'
 import { IoArrowForward } from "react-icons/io5";
