@@ -729,7 +729,7 @@ const App = () => {
             {/* Logo + Toggle (Fixed Header) */}
             <div className={`flex flex-row items-center shrink-0  ${!isExpanded ? 'justify-center' : 'justify-between'}`}>
               <div className={`${!isExpanded ? 'hidden' : 'block'}`}>
-                <img className='bg-black w-full h-10 object-contain' src={logo} alt="" />
+                <img className=' w-full h-10 object-contain' src={logo} alt="" />
               </div>
               <div onClick={() => setExpanded(!isExpanded)} className='cursor-pointer p-1 hover:bg-[#2a2a2a] rounded-lg transition-colors'>
                 {isExpanded ? (
