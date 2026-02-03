@@ -1245,7 +1245,7 @@ const App = () => {
                    min-h-[120px] sm:min-h-[140px] md:min-h-[130px] lg:min-h-[150px]">
 
                       <div className="w-10 h-10 md:w-12 md:h-12
-                        bg-[#2a2a2a] rounded-xl
+                        
                         flex items-center justify-center
                         group-hover:scale-110 transition-transform">
                         <img src={logomark} alt="" className="w-5 h-5 md:w-6 md:h-6" />
@@ -1270,7 +1270,7 @@ const App = () => {
                    min-h-[120px] sm:min-h-[140px] md:min-h-[130px] lg:min-h-[150px]">
 
                       <div className="w-10 h-10 md:w-12 md:h-12
-                        bg-[#2a2a2a] rounded-xl
+                        
                         flex items-center justify-center
                         group-hover:scale-110 transition-transform">
                         <img src={logomark1} alt="" className="w-5 h-5 md:w-6 md:h-6" />
@@ -1297,7 +1297,7 @@ const App = () => {
                    min-h-[120px] sm:min-h-[140px] md:min-h-[130px] lg:min-h-[150px]">
 
                       <div className="w-10 h-10 md:w-12 md:h-12
-                        bg-[#2a2a2a] rounded-xl
+                        
                         flex items-center justify-center
                         group-hover:scale-110 transition-transform">
                         <img src={logomark3} alt="" className="w-5 h-5 md:w-6 md:h-6" />
