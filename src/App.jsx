@@ -99,7 +99,7 @@ const App = () => {
       } else if (error.message.includes("safety") || error.message.includes("HARM")) {
         errorText = "The AI declined to answer this due to safety filters.";
       } else if (error.message.includes("404")) {
-        errorText = "Model version not supported. This key might be restricted to a specific region or Gemini version.";
+        errorText = "Model version not supported. This key might be restricted to a specific region or Gemini ....";
       }
 
       const errorMessage = {
