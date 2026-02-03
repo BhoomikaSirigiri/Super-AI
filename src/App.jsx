@@ -723,8 +723,13 @@ const App = () => {
         )}
 
         {/* SIDEBAR */}
-        <div className={`fixed h-screen transition-all duration-300 z-[60] 
-        ${isExpanded ? 'w-full lg:w-[20%] bg-[#121212] shadow-2xl' : 'w-16 lg:w-20 lg:bg-[#121212] bg-transparent'}`}>
+        <div
+          className={`fixed h-screen transition-all duration-300 z-[60]
+        ${isExpanded
+              ? 'w-full lg:w-[22%] xl:w-[18%] 2xl:w-[15%] bg-[#121212] shadow-2xl'
+              : 'w-16 lg:w-16 bg-transparent lg:bg-[#121212]'
+            }`}
+        >
           <nav className='p-4 h-full flex flex-col'>
             {/* Logo + Toggle (Fixed Header) */}
             <div className={`flex flex-row items-center shrink-0  ${!isExpanded ? 'justify-center' : 'justify-between'}`}>
@@ -855,7 +860,13 @@ const App = () => {
         </div>
 
         {/* MAIN CONTENT AREA */}
-        <div className={`flex-1 h-screen overflow-hidden flex flex-col transition-all duration-300 ${isExpanded ? 'lg:ml-[20%] ml-0' : 'ml-0 lg:ml-20'}`}>
+        <div
+          className={`flex-1 h-screen overflow-hidden flex flex-col transition-all duration-300
+  ${isExpanded
+              ? 'ml-0 lg:ml-72 xl:ml-64 2xl:ml-60'
+              : 'ml-0 lg:ml-20'
+            }`}
+        >
 
           {/* TOP BAR (UNFIXED within flex) */}
           <div className="flex justify-between items-center p-4 bg-[#121212] z-50 shrink-0">
@@ -919,7 +930,7 @@ const App = () => {
           </div>
 
           {/* CONTENT (SCROLLABLE) */}
-          <div className="flex-1 overflow-y-auto bg-[#121212] px-4 md:px-10 pb-6">
+          <div className="flex-1 overflow-y-auto bg-[#292929] h-screen px-4 md:px-10 pb-6">
             {activeItem === 'AI Development' ? (
               <div className="flex flex-col items-center py-6 md:py-10 animate-in fade-in duration-700">
                 {/* Dev Hub Header */}
@@ -1159,71 +1170,149 @@ const App = () => {
                 </div>
               </div>
             ) : !isChatting ? (
-              <div className='flex flex-col justify-center items-center gap-10 min-h-full'>
-                {/* Top Section */}
-                <div className='flex flex-col justify-center items-center text-center px-4 animate-in fade-in slide-in-from-bottom-6 duration-1000'>
-                  {/* Premium Avatar Section */}
-                  <div className='mb-4'>
-                    <img src={userProfilePic} alt="" className='w-32 h-32 md:w-44 md:h-44 object-cover rounded-full shadow-2xl border-4 border-white/5' />
+              <div className="flex-1 flex flex-col items-center
+                gap-4 sm:gap-6 md:gap-6 lg:gap-8
+                w-full max-w-7xl mx-auto
+                px-4 sm:px-5 md:px-6
+                overflow-y-auto">
+
+                {/* ================= TOP SECTION ================= */}
+                <div className="flex flex-col items-center text-center
+                  px-4 sm:px-5 md:px-6
+                  pt-4 sm:pt-6 md:pt-6 lg:pt-8">
+
+                  {/* ===== Avatar Section ===== */}
+                  <div className="relative flex items-center justify-center
+                    mt-2 sm:mt-4 md:mt-4 lg:mt-5">
+
+                    {/* Glow */}
+                    <div className="absolute
+                      w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 lg:w-44 lg:h-44
+                      rounded-full bg-white/20 blur-3xl" />
+
+                    {/* Profile Image */}
+                    <img
+                      src={userProfilePic}
+                      alt="Profile"
+                      className="relative
+                   w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-32 lg:h-32
+                   rounded-full object-cover"
+                    />
                   </div>
 
-                  {/* Dynamic Greeting Badge */}
-                  <div className='inline-flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1 rounded-full backdrop-blur-md mb-2 shadow-sm'>
-                    <span className='text-base'>
+                  {/* ===== Greeting Badge ===== */}
+                  <div className="inline-flex items-center gap-1
+                    bg-white/5 border border-white/10
+                    px-2 py-1 sm:px-3 sm:py-2
+                    rounded-full backdrop-blur-md
+                    mt-2 shadow-sm">
+                    <span className="text-sm sm:text-base md:text-sm">
                       {new Date().getHours() < 12 ? '☀️' : new Date().getHours() < 17 ? '🌤️' : '🌙'}
                     </span>
-                    <p className='text-[#e0e0e0] text-[10px] md:text-xs font-medium tracking-wide leading-none'>
-                      {getTimeBasedGreeting()}, <span className='text-white font-bold'>{userName}</span>
+                    <p className="text-[#e0e0e0] text-[10px] sm:text-xs md:text-sm font-medium tracking-wide leading-none">
+                      {getTimeBasedGreeting()},
+                      <span className="text-white font-bold"> {userName}</span>
                     </p>
                   </div>
 
-                  {/* Assistant Headline */}
-                  <h1 className='text-white text-lg md:text-2xl font-bold tracking-tight mt-1 max-w-2xl leading-[1.2]'>
-                    How can I assist you <span className='text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500'>today?</span>
+                  {/* ===== Headline ===== */}
+                  <h1 className="text-white text-base sm:text-lg md:text-xl lg:text-2xl font-bold tracking-tight
+                   mt-1 max-w-md md:max-w-xl lg:max-w-2xl leading-tight text-center">
+                    How can I assist you{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                      today?
+                    </span>
                   </h1>
                 </div>
 
-                {/* Service Cards Section */}
-                <div className='w-full max-w-4xl px-4 md:px-0'>
-                  <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6'>
+                {/* ================= SERVICE CARDS ================= */}
+                <div className="w-full max-w-4xl px-4 sm:px-5 md:px-6 pb-2 sm:pb-4 md:pb-4 lg:pb-6 flex-1">
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3
+                    gap-3 sm:gap-4 md:gap-4 lg:gap-6 auto-rows-fr">
+
+                    {/* Card 1 */}
                     <div
-                      onClick={() => handleSendMessage("Help Me to Create A Personal Branding And Web Page")}
-                      className='bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] hover:border-purple-500/50 rounded-2xl p-4 md:p-6 flex flex-col gap-3 md:gap-4 cursor-pointer transition-all duration-300 group'
-                    >
-                      <div className='w-10 h-10 md:w-12 md:h-12 bg-[#2a2a2a] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform'>
-                        <img src={logomark} alt="" className='w-5 h-5 md:w-6 md:h-6' />
+                      onClick={() =>
+                        handleSendMessage("Help Me to Create A Personal Branding And Web Page")
+                      }
+                      className="bg-[#3c3c3c] hover:bg-[#252525]
+                   border-2 border-[#505050] hover:border-purple-500/50
+                   rounded-2xl
+                   p-3 sm:p-4 md:p-4 lg:p-5
+                   flex flex-col gap-3 md:gap-3
+                   cursor-pointer transition-all duration-300 group
+                   min-h-[120px] sm:min-h-[140px] md:min-h-[130px] lg:min-h-[150px]">
+
+                      <div className="w-10 h-10 md:w-12 md:h-12
+                        bg-[#2a2a2a] rounded-xl
+                        flex items-center justify-center
+                        group-hover:scale-110 transition-transform">
+                        <img src={logomark} alt="" className="w-5 h-5 md:w-6 md:h-6" />
                       </div>
-                      <p className='text-gray-300 text-xs md:text-sm font-medium leading-relaxed'>
+
+                      <p className="text-gray-300 text-xs md:text-sm font-medium leading-relaxed">
                         Help Me to Create A Personal Branding And Web Page
                       </p>
                     </div>
 
+                    {/* Card 2 */}
                     <div
-                      onClick={() => handleSendMessage("Write A Report Based On My Website Data")}
-                      className='bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] hover:border-purple-500/50 rounded-2xl p-4 md:p-6 flex flex-col gap-3 md:gap-4 cursor-pointer transition-all duration-300 group'
-                    >
-                      <div className='w-10 h-10 md:w-12 md:h-12 bg-[#2a2a2a] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform'>
-                        <img src={logomark1} alt="" className='w-5 h-5 md:w-6 md:h-6' />
+                      onClick={() =>
+                        handleSendMessage("Write A Report Based On My Website Data")
+                      }
+                      className="bg-[#3c3c3c] hover:bg-[#252525]
+                   border-2 border-[#505050] hover:border-purple-500/50
+                   rounded-2xl
+                   p-3 sm:p-4 md:p-4 lg:p-5
+                   flex flex-col gap-3 md:gap-3
+                   cursor-pointer transition-all duration-300 group
+                   min-h-[120px] sm:min-h-[140px] md:min-h-[130px] lg:min-h-[150px]">
+
+                      <div className="w-10 h-10 md:w-12 md:h-12
+                        bg-[#2a2a2a] rounded-xl
+                        flex items-center justify-center
+                        group-hover:scale-110 transition-transform">
+                        <img src={logomark1} alt="" className="w-5 h-5 md:w-6 md:h-6" />
                       </div>
-                      <p className='text-gray-300 text-xs md:text-sm font-medium leading-relaxed'>
+
+                      <p className="text-gray-300 text-xs md:text-sm font-medium leading-relaxed">
                         Write A Report Based On My Website Data
                       </p>
                     </div>
 
+                    {/* Card 3 */}
                     <div
-                      onClick={() => handleSendMessage("Write A Tailored, Engaging Content, With A Focus Quality")}
-                      className='bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] hover:border-purple-500/50 rounded-2xl p-4 md:p-6 flex flex-col gap-3 md:gap-4 cursor-pointer transition-all duration-300 group'
-                    >
-                      <div className='w-10 h-10 md:w-12 md:h-12 bg-[#2a2a2a] rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform'>
-                        <img src={logomark3} alt="" className='w-5 h-5 md:w-6 md:h-6' />
+                      onClick={() =>
+                        handleSendMessage(
+                          "Write A Tailored, Engaging Content, With A Focus Quality"
+                        )
+                      }
+                      className="bg-[#3c3c3c] hover:bg-[#252525]
+                   border-2 border-[#505050] hover:border-purple-500/50
+                   rounded-2xl
+                   p-3 sm:p-4 md:p-4 lg:p-5
+                   flex flex-col gap-3 md:gap-3
+                   cursor-pointer transition-all duration-300 group
+                   min-h-[120px] sm:min-h-[140px] md:min-h-[130px] lg:min-h-[150px]">
+
+                      <div className="w-10 h-10 md:w-12 md:h-12
+                        bg-[#2a2a2a] rounded-xl
+                        flex items-center justify-center
+                        group-hover:scale-110 transition-transform">
+                        <img src={logomark3} alt="" className="w-5 h-5 md:w-6 md:h-6" />
                       </div>
-                      <p className='text-gray-300 text-xs md:text-sm font-medium leading-relaxed'>
+
+                      <p className="text-gray-300 text-xs md:text-sm font-medium leading-relaxed">
                         Write A Tailored, Engaging Content, With A Focus Quality
                       </p>
                     </div>
+
                   </div>
                 </div>
+
               </div>
+
             ) : (
               <div className="max-w-4xl mx-auto flex flex-col gap-8">
                 {messages.map((msg, index) => (
@@ -1276,7 +1365,7 @@ const App = () => {
           </div>
 
           {/* BOTTOM CHAT INPUT (STABLE) */}
-          <div className="w-full bg-[#121212] shrink-0 border-t border-[#333]/30">
+          <div className="w-full bg-[#292929] shrink-0 border-t border-[#333]/30">
             <div className="w-full max-w-5xl mx-auto py-4 px-3 md:px-6">
               <div className="bg-[#1a1a1a]/80 backdrop-blur-xl rounded-2xl border border-[#333] p-3 md:p-4 shadow-2xl">
                 <textarea
