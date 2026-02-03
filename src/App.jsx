@@ -12,7 +12,7 @@ import superai from './assets/superai.png'
 import logomark from './assets/logomark.png'
 import logomark1 from './assets/logomark1.png'
 import logomark3 from './assets/logomark2.png'
-import { FiChevronDown, FiImage, FiFileText, FiCamera, FiPaperclip, FiX, FiTrash2, FiSquare, FiZap, FiMail, FiLock, FiUser, FiLogOut } from "react-icons/fi";
+import { FiChevronDown, FiImage, FiFileText, FiCamera, FiPaperclip, FiX, FiTrash2, FiSquare, FiZap, FiMail, FiLock, FiUser, FiLogOut, FiMic } from "react-icons/fi";
 import useravatar from './assets/useravatar.png'
 import { IoArrowForward } from "react-icons/io5";
 
@@ -65,6 +65,69 @@ const App = () => {
     const saved = localStorage.getItem('imageUsage');
     return saved ? JSON.parse(saved) : { count: 0, lastReset: Date.now() };
   });
+
+  // --- VOICE COMMAND STATE ---
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = React.useRef(null);
+
+  // Initialize Speech Recognition
+  React.useEffect(() => {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
+
+      recognitionRef.current.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        if (finalTranscript) {
+          setText(prev => prev + finalTranscript);
+        }
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsListening(false);
+      };
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
+  const toggleVoiceInput = () => {
+    if (!recognitionRef.current) {
+      alert('Speech recognition is not supported in your browser. Please try Chrome or Edge.');
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      recognitionRef.current.start();
+      setIsListening(true);
+    }
+  };
 
   // --- NEW AUTHENTICATION STATE ---
   const [isAuthenticated, setIsAuthenticated] = useState(() => localStorage.getItem('isLoggedIn') === 'true');
@@ -137,8 +200,15 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    window.location.reload();
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('profileName');
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('userAvatar');
+    localStorage.removeItem('currentChatId');
+    setIsAuthenticated(false);
+    setIsChatting(false);
+    setMessages([]);
+    setCurrentChatId(null);
   };
 
   const getTimeBasedGreeting = () => {
@@ -364,11 +434,11 @@ const App = () => {
 
       console.log("Gemini API Payload:", JSON.stringify({ contents }, null, 2));
 
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-goog-api-key': GEMINI_API_KEY
+          'x-goog-api-key': GEMINI_API_KEY
         },
         body: JSON.stringify({ contents }),
         signal: controllerRef.current.signal
@@ -719,14 +789,28 @@ const App = () => {
                       key={chat.id}
                       onClick={() => loadChat(chat)}
                       onContextMenu={(e) => handleContextMenu(e, chat.id)}
-                      className={`flex flex-row items-center cursor-pointer mb-2 border-2 rounded-md hover:bg-[#2a2a2a] hover:text-white group p-3 ${isExpanded ? 'justify-start' : 'justify-center'} ${currentChatId === chat.id ? 'bg-[#2a2a2a] text-white border-[#3f3f3f]' : 'border-[#3f3f3f]'}`}
+                      className={`flex flex-row items-center gap-2 cursor-pointer mb-2 border-2 rounded-xl hover:bg-[#2a2a2a] hover:text-white group p-3 transition-all relative ${isExpanded ? 'justify-start' : 'justify-center'} ${currentChatId === chat.id ? 'bg-[#2a2a2a] text-white border-[#3f3f3f]' : 'border-transparent'}`}
                     >
-                      <img src={inbox} alt="" className={`${isExpanded ? 'mr-2' : ''}`} />
-                      <div className={`overflow-hidden w-full ${!isExpanded && 'hidden'}`}>
+                      <img src={inbox} alt="" className={`${isExpanded ? '' : ''} opacity-60 group-hover:opacity-100`} />
+                      <div className={`overflow-hidden flex-1 ${!isExpanded && 'hidden'}`}>
                         <p className={`truncate text-sm group-hover:text-white ${currentChatId === chat.id ? 'text-white font-medium' : 'text-[#6b6b6b]'}`}>
                           {chat.title}
                         </p>
                       </div>
+
+                      {/* Desktop Delete Button */}
+                      {isExpanded && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteChat(chat.id);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-red-500/10 hover:text-red-500 rounded-lg transition-all"
+                          title="Delete Chat"
+                        >
+                          <FiTrash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </dd>
@@ -1146,10 +1230,10 @@ const App = () => {
                     <div className={`max-w-[85%] md:max-w-[75%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-[#2a2a2a] text-white' : 'bg-[#1a1a1a] border border-[#333] text-gray-100 shadow-lg'}`}>
                       <div className="flex items-center gap-2 mb-3 border-b border-gray-800 pb-2">
                         <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center overflow-hidden">
-                          <img src={msg.role === 'user' ? user : superai} className="w-full h-full object-cover" />
+                          <img src={msg.role === 'user' ? userProfilePic : superai} className="w-full h-full object-cover" />
                         </div>
                         <span className="text-xs uppercase tracking-wider font-bold text-gray-500">
-                          {msg.role === 'user' ? 'Guest Explorer' : 'Super AI 2.0'}
+                          {msg.role === 'user' ? userName : 'Super AI 2.0'}
                         </span>
                       </div>
                       {msg.attachment && (
@@ -1287,6 +1371,14 @@ const App = () => {
                     <span className="text-xs text-gray-500">
                       {text.length}/{maxChars}
                     </span>
+                    {/* VOICE INPUT BUTTON */}
+                    <button
+                      onClick={toggleVoiceInput}
+                      className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all active:scale-95 z-[90] ${isListening ? 'bg-red-500 text-white animate-pulse shadow-lg shadow-red-500/50' : 'bg-[#2a2a2a] text-gray-400 hover:text-white hover:bg-[#333]'}`}
+                      title={isListening ? "Stop listening" : "Voice input"}
+                    >
+                      <FiMic className={`text-lg ${isListening ? 'animate-bounce' : ''}`} />
+                    </button>
                     <button
                       onClick={handleSendMessage}
                       className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all active:scale-95 z-[90] ${isLoading || isGeneratingImage ? 'bg-red-500 text-white' : activeItem === 'AI Image' ? (imageUsage.count >= 2 ? 'bg-red-500/20 text-red-500 border border-red-500/50' : 'bg-purple-600 text-white shadow-lg shadow-purple-500/30') : 'bg-white text-black hover:bg-gray-200'} ${(!text.trim() && !selectedFile && !isLoading && !isGeneratingImage) || (activeItem === 'AI Image' && imageUsage.count >= 2) ? 'opacity-30 cursor-not-allowed' : 'opacity-100 cursor-pointer'}`}
