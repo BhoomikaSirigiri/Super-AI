@@ -1317,9 +1317,9 @@ const App = () => {
               <div className="max-w-4xl mx-auto flex flex-col gap-8">
                 {messages.map((msg, index) => (
                   <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[85%] md:max-w-[75%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-[#2a2a2a] text-white' : 'bg-[#1a1a1a] border border-[#333] text-gray-100 shadow-lg'}`}>
+                    <div className={`max-w-[85%] md:max-w-[75%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-[#121212] mt-3 text-white' : 'bg-[#1a1a1a] border border-[#333] text-gray-100 shadow-lg'}`}>
                       <div className="flex items-center gap-2 mb-3 border-b border-gray-800 pb-2">
-                        <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center overflow-hidden">
+                        <div className="w-6 h-6 rounded-fullbg bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center overflow-hidden">
                           <img src={msg.role === 'user' ? userProfilePic : superai} className="w-full h-full object-cover" />
                         </div>
                         <span className="text-xs uppercase tracking-wider font-bold text-gray-500">
