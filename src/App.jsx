@@ -16,6 +16,7 @@ import { FiChevronDown, FiImage, FiFileText, FiCamera, FiPaperclip, FiX, FiTrash
 import useravatar from './assets/useravatar.png'
 import { IoArrowForward } from "react-icons/io5";
 
+
 // ⚠️ IMPORTANT: API key is now stored in .env file
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
