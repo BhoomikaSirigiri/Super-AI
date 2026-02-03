@@ -12,15 +12,21 @@ import superai from './assets/superai.png'
 import logomark from './assets/Logomark.png'
 import logomark1 from './assets/Logomark1.png'
 import logomark3 from './assets/Logomark2.png'
-import { FiChevronDown } from "react-icons/fi";
+import { FiChevronDown, FiImage, FiFileText, FiCamera, FiPaperclip } from "react-icons/fi";
 import useravatar from './assets/useravatar.png'
 import { IoArrowForward } from "react-icons/io5";
+
+// ⚠️ IMPORTANT: API key is now stored in .env file
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const App = () => {
   const [activeItem, setActiveItem] = useState('AI Chat');
   const [isExpanded, setExpanded] = useState(false);
   const [isModelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const [isAttachmentMenuOpen, setAttachmentMenuOpen] = useState(false);
   const [text, setText] = useState("");
+  const imageInputRef = React.useRef(null);
+  const fileInputRef = React.useRef(null);
   const [messages, setMessages] = useState([]);
   const [previousChatList, setPreviousChatList] = useState([
     'Describe the benefits for a.....',
@@ -56,25 +62,54 @@ const App = () => {
       setPreviousChatList(prev => [userMessage.substring(0, 30) + "...", ...prev]);
     }
 
-    // Advanced Mock AI Logic
-    setTimeout(() => {
-      let aiContent = "";
-      const lowerMsg = userMessage.toLowerCase();
+    try {
+      // Using the user's suggested stable V1 endpoint and model name
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: userMessage }] }]
+        })
+      });
 
-      if (lowerMsg.includes("branding") || lowerMsg.includes("web page")) {
-        aiContent = "That's a great goal! To create a strong personal brand, we should start by defining your unique value proposition. For the web page, I recommend a clean, minimalist design using React and Tailwind CSS. Would you like me to draft a structure for your homepage?";
-      } else if (lowerMsg.includes("report") || lowerMsg.includes("data")) {
-        aiContent = "I can certainly help you synthesize your website data into a comprehensive report. I'll focus on key metrics like user engagement, bounce rates, and conversion paths. Please paste the raw data or describe the specific trends you've noticed.";
-      } else if (lowerMsg.includes("content") || lowerMsg.includes("quality")) {
-        aiContent = "Quality content is king! I can help you craft engaging, SEO-optimized articles or social media posts. What's the primary audience you're targeting, and what tone should we strike (e.g., professional, witty, or inspirational)?";
-      } else {
-        aiContent = `I appreciate your message about "${userMessage}". As Super AI 2.0, I've analyzed your request and can provide deep insights. Let's start by breaking this down into three actionable steps. Which part should we focus on first?`;
+      const data = await response.json();
+
+      if (data.error) {
+        throw new Error(`${data.error.code || 'API Error'} - ${data.error.message}`);
       }
 
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error("No response from AI. Please try a different query.");
+      }
+
+      const aiContent = data.candidates[0].content.parts[0].text;
       const aiResponse = { role: 'ai', content: aiContent };
       setMessages(prev => [...prev, aiResponse]);
+    } catch (error) {
+      console.error("AI Error:", error);
+
+      let errorText = "Oops! I'm having trouble connecting. Please check your Gemini API key in `App.jsx`.";
+
+      if (error.message.includes("API_KEY_INVALID") || error.message.includes("401")) {
+        errorText = "Your API Key is invalid or not yet active. Please double-check it in Google AI Studio.";
+      } else if (error.message.includes("quota") || error.message.includes("429")) {
+        errorText = "You've exceeded your free quota. Try again in a minute!";
+      } else if (error.message.includes("safety") || error.message.includes("HARM")) {
+        errorText = "The AI declined to answer this due to safety filters.";
+      } else if (error.message.includes("404")) {
+        errorText = "Model version not supported. This key might be restricted to a specific region or Gemini version.";
+      }
+
+      const errorMessage = {
+        role: 'ai',
+        content: errorText + " (Technical Details: " + error.message + ")"
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1200);
+    }
   };
 
   const handleNewChat = () => {
@@ -82,6 +117,15 @@ const App = () => {
     setIsChatting(false);
     setText("");
     setModelDropdownOpen(false);
+  };
+
+  const handleFileChange = (e, type) => {
+    const file = e.target.files[0];
+    if (file) {
+      alert(`Selected ${type}: ${file.name}`);
+      // Here you would typically handle the file upload or add it to the message state
+      setAttachmentMenuOpen(false);
+    }
   };
 
   React.useEffect(() => {
@@ -343,8 +387,69 @@ const App = () => {
                 className="w-full resize-none bg-transparent text-white placeholder-gray-500 focus:outline-none text-xs md:text-sm leading-relaxed pr-12 md:pr-24"
               />
               <div className="flex items-center justify-between mt-2 md:mt-3 border-t border-[#333] pt-2 md:pt-3">
-                <div className="text-[10px] md:text-xs text-gray-400 flex gap-3 md:gap-4">
-                  <span className="cursor-pointer hover:text-white transition-colors">📎 Attach</span>
+                <div className="text-[10px] md:text-xs text-gray-400 flex gap-3 md:gap-4 relative">
+                  <div className="relative">
+                    <button
+                      onClick={() => setAttachmentMenuOpen(!isAttachmentMenuOpen)}
+                      className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors"
+                    >
+                      <FiPaperclip className="text-sm md:text-base" />
+                      <span>Attach</span>
+                    </button>
+
+                    {/* ATTACHMENT MENU */}
+                    {isAttachmentMenuOpen && (
+                      <div className="absolute bottom-full mb-4 left-0 bg-[#1a1a1a] border border-[#333] rounded-2xl shadow-2xl p-2 min-w-[180px] z-[70] overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-200">
+                        <div className="flex flex-col gap-1">
+                          {/* Hidden Inputs */}
+                          <input
+                            type="file"
+                            ref={imageInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) => handleFileChange(e, 'Image')}
+                          />
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            className="hidden"
+                            accept=".pdf,.doc,.docx,.txt"
+                            onChange={(e) => handleFileChange(e, 'Document')}
+                          />
+
+                          <button
+                            onClick={() => imageInputRef.current.click()}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-[#252525] rounded-xl transition-colors text-gray-300 hover:text-white text-xs md:text-sm text-left"
+                          >
+                            <FiCamera className="text-purple-500" />
+                            <span>Take Photo</span>
+                          </button>
+                          <button
+                            onClick={() => imageInputRef.current.click()}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-[#252525] rounded-xl transition-colors text-gray-300 hover:text-white text-xs md:text-sm text-left"
+                          >
+                            <FiImage className="text-blue-500" />
+                            <span>Add Image</span>
+                          </button>
+                          <button
+                            onClick={() => fileInputRef.current.click()}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-[#252525] rounded-xl transition-colors text-gray-300 hover:text-white text-xs md:text-sm text-left"
+                          >
+                            <FiFileText className="text-green-500" />
+                            <span>Document</span>
+                          </button>
+                          <div className="h-[1px] bg-[#333] my-1 mx-2"></div>
+                          <button
+                            onClick={() => fileInputRef.current.click()}
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-[#252525] rounded-xl transition-colors text-gray-400 hover:text-white text-[10px] md:text-xs text-left"
+                          >
+                            <FiPaperclip className="text-gray-500" />
+                            <span>Library</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <span className="cursor-pointer hover:text-white transition-colors max-sm:hidden">🌐 Settings</span>
                 </div>
                 <div className="flex items-center gap-2 md:gap-3">
